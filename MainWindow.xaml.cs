@@ -2,19 +2,9 @@
 using System;
 using System.Windows;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace StudioDecoder
 {
@@ -28,7 +18,8 @@ namespace StudioDecoder
         public MainWindow()
         {
             InitializeComponent();
-            logTextBox.AppendText("Welcome to StudioDecoder" + Environment.NewLine);
+            logTextBox.AppendText("Welcome to Decoder Studio" +
+                "" + Environment.NewLine);
             characterToBitMapping = new Dictionary<char, int>
             {
                 {'@', 0},
@@ -87,11 +78,11 @@ namespace StudioDecoder
                 string filePath = openFileDialog.FileName;
                 logTextBox.AppendText("Loading File - " + openFileDialog.FileName + Environment.NewLine);
 
-                if (videoBool.IsChecked == true)
+                if (VideoCheckbox.IsChecked == true)
                 {
                     OpenFileDialog openFileVideoDialog = new OpenFileDialog
                     {
-                        Title = "Browse Studio C Data",
+                        Title = "Browse Videos",
                         DefaultExt = "mp4",
                         Filter = "Video Files|*.wmv;*.avi;*.mpeg;*.mp4;*.mkv;*.mov|Audio Files|*.mp3;*.wav|All Files|*.*",
                         Multiselect = false
@@ -101,7 +92,7 @@ namespace StudioDecoder
                     if (videoresult == true)
                     {
                         logTextBox.AppendText("Loading Video - " + openFileVideoDialog.FileName + Environment.NewLine);
-
+                        VideoPlayer.Source = new Uri(openFileVideoDialog.FileName, UriKind.Absolute);
                     }
                 }
                 await ProcessFileLiveAsync(filePath);
@@ -192,6 +183,10 @@ namespace StudioDecoder
                         logTextBox.AppendText($"No bit mapping found for character '{character}'." + Environment.NewLine);
                     }
                 }
+                if (nonFrameData.Contains("*E")) // Video Play
+                {
+
+                }
             }
             catch (Exception ex)
             {
@@ -224,6 +219,15 @@ namespace StudioDecoder
         private void Forward_Click(object sender, RoutedEventArgs e)
         {
             logTextBox.AppendText("Forward 10 seconds" + Environment.NewLine);
+        }
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+            About about = new About();
+            about.Show();
+        }
+        private void Github_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/realrandombeans/Decoder-Studio");
         }
     }
 }

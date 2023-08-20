@@ -5,9 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StudioDecoder"
         mc:Ignorable="d"
-        Title="StudioDecoder" Height="720" Width="1280" WindowStyle="SingleBorderWindow" ResizeMode="CanResize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen" MinWidth="640" MinHeight="480">
+        Title="Decoder Studio" Height="720" Width="1280" WindowStyle="SingleBorderWindow" ResizeMode="CanResize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen" MinWidth="640" MinHeight="480" Icon="/icon.png">
     <Grid x:Name="grid">
         <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_File">
+                    <MenuItem Header="_Open Showtape" Click="Button_ClickAsync"/>
+                </MenuItem>
+                <MenuItem Header="_Help">
+                    <MenuItem Header="_Github" Click="Github_Click"/>
+                    <MenuItem Header="_About Decoder Studio" Click="About_Click"/>
+                </MenuItem>
+            </Menu>
+            <StackPanel></StackPanel>
             <ToolBarTray DockPanel.Dock="Top" Height="25" VerticalAlignment="Top">
                 <ToolBar>
                     <Button ToolTip="Open a Showtape" Click="Button_ClickAsync">
@@ -43,10 +53,13 @@
                     </Button>
                 </ToolBar>
             </ToolBarTray>
-            <MediaElement Width="100"/>
+            <MediaElement x:Name="VideoPlayer" Width="640" HorizontalAlignment="Right" UnloadedBehavior="Manual" ClipToBounds="True" Margin="0,0,0,180"/>
         </DockPanel>
-        <TextBox x:Name="logTextBox" TextWrapping="Wrap" VerticalAlignment="Bottom" Height="200" HorizontalAlignment="Stretch"/>
-        <CheckBox x:Name="translateMovementsBool" Content="Translate Movements" HorizontalAlignment="Left" Margin="0,0,0,225" VerticalAlignment="Bottom"/>
-        <CheckBox x:Name="videoBool" Content="Use Video" HorizontalAlignment="Left" Margin="0,0,0,245" VerticalAlignment="Bottom"/>
+        <StackPanel Width="150" VerticalAlignment="Top" HorizontalAlignment="Left" Height="480" Margin="0,43,0,0" ClipToBounds="True">
+            <CheckBox x:Name="VideoCheckbox" Content="Video Enabled" Margin="5,5,0,0"/>
+        </StackPanel>
+        <TextBox x:Name="logTextBox" TextWrapping="Wrap" VerticalAlignment="Bottom" Height="180" HorizontalAlignment="Stretch" IsReadOnly="True"/>
+        <CheckBox x:Name="translateMovementsBool" Content="Translate Movements" HorizontalAlignment="Left" Margin="0,0,0,225" VerticalAlignment="Bottom" Visibility="Hidden"/>
+        <CheckBox x:Name="videoBool" Content="Use Video" HorizontalAlignment="Left" Margin="0,0,0,245" VerticalAlignment="Bottom" Visibility="Hidden"/>
     </Grid>
 </Window>
