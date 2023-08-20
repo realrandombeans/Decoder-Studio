@@ -1,0 +1,21 @@
+﻿<Window x:Class="StudioDecoder.About"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StudioDecoder"
+        mc:Ignorable="d"
+        Title="About" Height="400" Width="500" ResizeMode="NoResize">
+    <Grid>
+        <Image Height="125" Width="500" VerticalAlignment="Top" HorizontalAlignment="Left" Source="/Media/banner.png"/>
+        <StackPanel Margin="25,150,25,25">
+            <Label Content="Decoder Studio v0.1.0 "/>
+            <Label Content="www.random-beans.com"/>
+            <Label Content=" GNU General Public License v3.0"/>
+            <Label Content="Special thanks to Galla for helping out!"/>
+        </StackPanel>
+
+    </Grid>
+</Window>
+
+    
