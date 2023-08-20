@@ -22,38 +22,38 @@ namespace StudioDecoder
                 "" + Environment.NewLine);
             characterToBitMapping = new Dictionary<char, int>
             {
-                {'@', 0},
-                {'A', 1},
-                {'B', 2},
-                {'C', 3},
-                {'D', 4},
-                {'E', 5},
-                {'F', 6},
-                {'G', 7},
-                {'H', 8},
-                {'I', 9},
-                {'J', 10},
-                {'K', 11},
-                {'L', 12},
-                {'M', 13},
-                {'N', 14},
-                {'O', 15},
-                {'P', 16},
-                {'Q', 17},
-                {'R', 18},
-                {'S', 19},
-                {'T', 20},
-                {'U', 21},
-                {'V', 22},
-                {'W', 23},
-                {'X', 24},
-                {'Y', 25},
-                {'Z', 26},
-                {'[', 27},
-                {System.IO.Path.DirectorySeparatorChar, 28},
-                {']', 29},
-                {'^', 30},
-                {'_', 31}
+                {'@', 1},
+                {'A', 2},
+                {'B', 3},
+                {'C', 4},
+                {'D', 5},
+                {'E', 6},
+                {'F', 7},
+                {'G', 8},
+                {'H', 9},
+                {'I', 10},
+                {'J', 11},
+                {'K', 12},
+                {'L', 13},
+                {'M', 14},
+                {'N', 15},
+                {'O', 16},
+                {'P', 17},
+                {'Q', 18},
+                {'R', 19},
+                {'S', 20},
+                {'T', 21},
+                {'U', 22},
+                {'V', 23},
+                {'W', 24},
+                {'X', 25},
+                {'Y', 26},
+                {'Z', 27},
+                {'[', 28},
+                {System.IO.Path.DirectorySeparatorChar, 29},
+                {']', 30},
+                {'^', 31},
+                {'_', 32}
             };
         }
 
@@ -98,6 +98,7 @@ namespace StudioDecoder
                 await ProcessFileLiveAsync(filePath);
             }
         }
+
         private async Task ProcessFileLiveAsync(string filePath)
         {
             isProcessing = true;
@@ -124,11 +125,26 @@ namespace StudioDecoder
                         {
                             if (isNonFrameData)
                             {
-                                ConvertNonFrameDataToBit(nonFrameData); // Convert non-frame data to bit
+                                // Convert non-frame data to bit for all bits collected
+                                ConvertNonFrameDataToBit(nonFrameData);
                                 isNonFrameData = false;
                                 nonFrameData = "";
                             }
                             frameCount++;
+                        }
+                        else if (frameData[i] == '*')
+                        {
+                            // Extract command between '*' and '\'
+                            string command = "";
+                            i++; // Move past the '*'
+                            while (i < frameData.Length && frameData[i] != '\\')
+                            {
+                                command += frameData[i];
+                                i++;
+                            }
+
+                            // Determine and log command type
+                            LogCommandType(command);
                         }
                         else
                         {
@@ -138,6 +154,14 @@ namespace StudioDecoder
                                 nonFrameData = "";
                             }
                             nonFrameData += frameData[i];
+                        }
+
+                        // Check for additional bits within the same frame
+                        if (isNonFrameData && nonFrameData.Length >= 2 && i + 1 < frameData.Length && frameData[i + 1] != '!')
+                        {
+                            ConvertNonFrameDataToBit(nonFrameData); // Convert non-frame data to bit
+                            isNonFrameData = false;
+                            nonFrameData = "";
                         }
 
                         // Delay for frame rate
@@ -155,6 +179,175 @@ namespace StudioDecoder
             isProcessing = false;
         }
 
+        private void LogCommandType(string command)
+        {
+            if (command.StartsWith("A") && command.Contains("V"))
+            {
+                // Analog Command
+                string[] parts = command.Split('V');
+                if (int.TryParse(parts[0].Substring(1), out int channel) && int.TryParse(parts[1], out int value))
+                {
+                    string logMessage = $"Analog Command. Channel {channel}, Value {value}.";
+                    logTextBox.AppendText(logMessage + Environment.NewLine);
+                }
+                else
+                {
+                    logTextBox.AppendText($"Unknown command: {command}" + Environment.NewLine);
+                }
+            }
+            else if (command == "E")
+            {
+                // Showtape Start Command
+                string logMessage = "Showtape Start";
+                logTextBox.AppendText(logMessage + Environment.NewLine);
+            }
+            else if (command.StartsWith("M201") && command.Contains("V"))
+            {
+                // Disk Command
+                string[] parts = command.Split('V');
+                if (int.TryParse(parts[1], out int disk) && int.TryParse(parts[2], out int timestamp1) && int.TryParse(parts[3], out int timestamp2))
+                {
+                    string logMessage = $"Disk Command. Disk {disk}, Time {timestamp1}{timestamp2}.";
+                    logTextBox.AppendText(logMessage + Environment.NewLine);
+                }
+                else
+                {
+                    logTextBox.AppendText($"Unknown command: {command}" + Environment.NewLine);
+                }
+            }
+            else if (command.StartsWith("M211") && command.Contains("V"))
+            {
+                // Video Command
+                string[] parts = command.Split('V');
+                if (int.TryParse(parts[1], out int disk) && int.TryParse(parts[2], out int output))
+                {
+                    if (disk > 3)
+                    {
+                        string outputName = GetVideoOutputName(output);
+                        string logMessage = $"Video Command Unknown displaying to {outputName}.";
+                        logTextBox.AppendText(logMessage + Environment.NewLine);
+                    }
+                    else
+                    {
+                        string outputName = GetVideoOutputName(output);
+                        string logMessage = $"Video Command. Disk {disk}, Output {outputName}.";
+                        logTextBox.AppendText(logMessage + Environment.NewLine);
+                    }
+                }
+                else
+                {
+                    logTextBox.AppendText($"Unknown command: {command}" + Environment.NewLine);
+                }
+            }
+            else if (command.StartsWith("M212") && command.Contains("V"))
+            {
+                // Audio Command
+                string[] parts = command.Split('V');
+                if (int.TryParse(parts[1], out int output) && int.TryParse(parts[2], out int info))
+                {
+                    string logMessage = GetAudioCommandMessage(output, info);
+                    logTextBox.AppendText(logMessage + Environment.NewLine);
+                }
+                else
+                {
+                    logTextBox.AppendText($"Unknown command: {command}" + Environment.NewLine);
+                }
+            }
+            else if (command.StartsWith("M206") && command.Contains("V"))
+            {
+                // Fade Command
+                string[] parts = command.Split('V');
+                if (int.TryParse(parts[1], out int disk) && int.TryParse(parts[2], out int fadeToValue) && int.TryParse(parts[3], out int rate))
+                {
+                    string logMessage = $"Fade Disk {disk} to {fadeToValue} at Rate: {rate}.";
+                    logTextBox.AppendText(logMessage + Environment.NewLine);
+                }
+                else
+                {
+                    logTextBox.AppendText($"Unknown command: {command}" + Environment.NewLine);
+                }
+            }
+            else
+            {
+                logTextBox.AppendText($"Unknown command: {command}" + Environment.NewLine);
+            }
+        }
+
+
+        private string GetAudioCommandMessage(int output, int info)
+        {
+            if (output >= 1 && output <= 7)
+            {
+                string outputName = GetAudioOutputName(output);
+                if (info == 1)
+                {
+                    return $"Disk Audio to {outputName}.";
+                }
+                else if (info == 2)
+                {
+                    return $"Disk Audio to {outputName}.";
+                }
+                else if (info == 3)
+                {
+                    return $"Disk Audio to {outputName}.";
+                }
+                else
+                {
+                    return "Unknown command";
+                }
+            }
+            else if (output == 16)
+            {
+                string infoText = GetAudioInfoText(info);
+                return $"Disk 1 Audio to {infoText}.";
+            }
+            else
+            {
+                return "Unknown command";
+            }
+        }
+
+        private string GetAudioOutputName(int output)
+        {
+            switch (output)
+            {
+                case 1: return "Center monitor Left Channel DVD Player 1";
+                case 2: return "Center monitor Left Channel DVD Player 2";
+                case 3: return "Center monitor Left Channel DVD Player 3";
+                case 5: return "Center monitor Right Channel DVD Player 1";
+                case 6: return "Center monitor Right Channel DVD Player 2";
+                case 7: return "Center monitor Right Channel DVD Player 3";
+                case 16: return "Disk 1";
+                default: return "Unknown Output";
+            }
+        }
+
+        private string GetAudioInfoText(int info)
+        {
+            switch (info)
+            {
+                case 1: return "Gameroom";
+                case 2: return "ON HOLD";
+                case 3: return "Karaoke";
+                default: return "Unknown Info";
+            }
+        }
+
+        private string GetVideoOutputName(int output)
+        {
+            switch (output)
+            {
+                case 1: return "Center Monitor";
+                case 2: return "Left Monitor";
+                case 3: return "Right Monitor";
+                case 4: return "Apple Monitor";
+                case 5: return "Ceiling Monitors";
+                case 6: return "Games Monitors";
+                case 7: return "Kiddie Monitor";
+                case 16: return "Bluescreen";
+                default: return "Unknown Output";
+            }
+        }
 
         private void ConvertNonFrameDataToBit(string nonFrameData)
         {
@@ -166,14 +359,44 @@ namespace StudioDecoder
                     char character = nonFrameData[1];
                     if (characterToBitMapping.TryGetValue(character, out int bit))
                     {
-                        if (nonFrameData[0] == '0' || nonFrameData[0] == '3')
+                        if (nonFrameData[0] == '0')
                         {
-                            logMessage = $"Bit value for '{character}' is: {bit} and has been disabled";
+                            logMessage = $"Bit value for '{character}' is: {bit} on DTU 1 and has been disabled";
                             logTextBox.AppendText(logMessage + Environment.NewLine);
                         }
-                        else if (nonFrameData[0] == '1' || nonFrameData[0] == '2')
+                        else if (nonFrameData[0] == '1')
                         {
-                            logMessage = $"Bit value for '{character}' is: {bit} and has been enabled";
+                            logMessage = $"Bit value for '{character}' is: {bit} on DTU 1 and has been enabled";
+                            logTextBox.AppendText(logMessage + Environment.NewLine);
+                        }
+                        if (nonFrameData[0] == '2')
+                        {
+                            logMessage = $"Bit value for '{character}' is: {bit + 32} on DTU 1 and has been disabled";
+                            logTextBox.AppendText(logMessage + Environment.NewLine);
+                        }
+                        else if (nonFrameData[0] == '3')
+                        {
+                            logMessage = $"Bit value for '{character}' is: {bit + 32} on DTU 1 and has been enabled";
+                            logTextBox.AppendText(logMessage + Environment.NewLine);
+                        }
+                        if (nonFrameData[0] == '4')
+                        {
+                            logMessage = $"Bit value for '{character}' is: {bit} on DTU 2 and has been disabled";
+                            logTextBox.AppendText(logMessage + Environment.NewLine);
+                        }
+                        else if (nonFrameData[0] == '5')
+                        {
+                            logMessage = $"Bit value for '{character}' is: {bit} on DTU 2 and has been enabled";
+                            logTextBox.AppendText(logMessage + Environment.NewLine);
+                        }
+                        if (nonFrameData[0] == '6')
+                        {
+                            logMessage = $"Bit value for '{character}' is: {bit + 32} on DTU 2 and has been disabled";
+                            logTextBox.AppendText(logMessage + Environment.NewLine);
+                        }
+                        else if (nonFrameData[0] == '7')
+                        {
+                            logMessage = $"Bit value for '{character}' is: {bit + 32} on DTU 2 and has been enabled";
                             logTextBox.AppendText(logMessage + Environment.NewLine);
                         }
                     }
