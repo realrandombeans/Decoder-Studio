@@ -1,0 +1,52 @@
+﻿<Window x:Class="StudioDecoder.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StudioDecoder"
+        mc:Ignorable="d"
+        Title="StudioDecoder" Height="720" Width="1280" WindowStyle="SingleBorderWindow" ResizeMode="CanResize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen" MinWidth="640" MinHeight="480">
+    <Grid x:Name="grid">
+        <DockPanel>
+            <ToolBarTray DockPanel.Dock="Top" Height="25" VerticalAlignment="Top">
+                <ToolBar>
+                    <Button ToolTip="Open a Showtape" Click="Button_ClickAsync">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Icons/folder.png" />
+                            <TextBlock Margin="3,0,0,0">Open Showtape</TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <Button ToolTip="Back (10 secs)">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Icons/control_rewind.png" />
+                        </StackPanel>
+                    </Button>
+                    <Button ToolTip="Play" Click="Play_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Icons/control_play.png" />
+                        </StackPanel>
+                    </Button>
+                    <Button ToolTip="Pause" Click="Pause_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Icons/control_pause.png" />
+                        </StackPanel>
+                    </Button>
+                    <Button ToolTip="Stop" Click="Stop_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Icons/control_stop.png" />
+                        </StackPanel>
+                    </Button>
+                    <Button ToolTip="Forward (10 secs)" Click="Forward_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Icons/control_fastforward.png" />
+                        </StackPanel>
+                    </Button>
+                </ToolBar>
+            </ToolBarTray>
+            <MediaElement Width="100"/>
+        </DockPanel>
+        <TextBox x:Name="logTextBox" TextWrapping="Wrap" VerticalAlignment="Bottom" Height="200" HorizontalAlignment="Stretch"/>
+        <CheckBox x:Name="translateMovementsBool" Content="Translate Movements" HorizontalAlignment="Left" Margin="0,0,0,225" VerticalAlignment="Bottom"/>
+        <CheckBox x:Name="videoBool" Content="Use Video" HorizontalAlignment="Left" Margin="0,0,0,245" VerticalAlignment="Bottom"/>
+    </Grid>
+</Window>
