@@ -1,7 +1,7 @@
 ![DecoderStudio Logo](Media/banner.png)
 Welcome to **Decoder Studio**, a free, open sourced decoder meant for decoding animatronic signals from Studio C and more. Before using this application, please read below.
 # Features
-- **Translation** of bits to English
+- **Unique Command Support
 - **Video Support**
 - **Easy to use UI**
 - Lots more!
