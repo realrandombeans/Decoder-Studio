@@ -1,1 +1,1 @@
-![DecoderStudio Logo](Decoder-Studio/blob/main/Media/banner.png)
+![DecoderStudio Logo](/blob/main/Media/banner.png)
