@@ -20,7 +20,7 @@ namespace StudioDecoder
             InitializeComponent();
             logTextBox.AppendText("Welcome to Decoder Studio" +
                 "" + Environment.NewLine);
-            characterToBitMapping = new Dictionary<char, int>
+            characterToBitMapping = new Dictionary<char, int> // this is gonna be a nightmare when we add other file formats
             {
                 {'@', 1},
                 {'A', 2},
@@ -405,10 +405,6 @@ namespace StudioDecoder
                         // Append the error message to the TextBox
                         logTextBox.AppendText($"No bit mapping found for character '{character}'." + Environment.NewLine);
                     }
-                }
-                if (nonFrameData.Contains("*E")) // Video Play
-                {
-
                 }
             }
             catch (Exception ex)
