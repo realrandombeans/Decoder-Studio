@@ -6,31 +6,33 @@
         xmlns:local="clr-namespace:StudioDecoder"
         mc:Ignorable="d"
         Title="Decoder Studio" Height="720" Width="1280" WindowStyle="SingleBorderWindow" ResizeMode="CanResize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen" MinWidth="800" MinHeight="600" Icon="/icon.png">
-    <Grid x:Name="grid">
+    <Grid x:Name="grid" Background="#F8F8F8">
         <Grid.RowDefinitions>
             <RowDefinition Height="59*"/>
             <RowDefinition Height="645*"/>
         </Grid.RowDefinitions>
-        <DockPanel Grid.RowSpan="2">
+        <DockPanel x:Name="dockPanel" Grid.RowSpan="2">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
                     <MenuItem Header="_Open Showtape" Click="Button_ClickAsync"/>
                 </MenuItem>
                 <MenuItem Header="_Help">
+                    <MenuItem Header="_Website" Click="Website_Click"/>
+                    <MenuItem Header="_Discord" Click="Discord_Click"/>
                     <MenuItem Header="_Github" Click="Github_Click"/>
                     <MenuItem Header="_About Decoder Studio" Click="About_Click"/>
                 </MenuItem>
             </Menu>
             <StackPanel></StackPanel>
-            <ToolBarTray DockPanel.Dock="Top" Height="25" VerticalAlignment="Top">
-                <ToolBar>
+            <ToolBarTray DockPanel.Dock="Top" Height="25" VerticalAlignment="Top" Background="#F8F8F8">
+                <ToolBar Background="#F8F8F8">
                     <Button ToolTip="Open a Showtape" Click="Button_ClickAsync">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="Icons/folder.png" />
                             <TextBlock Margin="3,0,0,0">Open Showtape</TextBlock>
                         </StackPanel>
                     </Button>
-                    <Button ToolTip="Back (10 secs)">
+                    <Button ToolTip="Back (10 secs)" Click="Back_Click">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="Icons/control_rewind.png" />
                         </StackPanel>
@@ -55,15 +57,39 @@
                             <Image Source="Icons/control_fastforward.png" />
                         </StackPanel>
                     </Button>
+                    <Button ToolTip="Export Log" Click="Export_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Icons/script_save.png" />
+                        </StackPanel>
+                    </Button>
+                    <Button ToolTip="Clear Log" Click="ClearLog_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Icons/script_delete.png" />
+                        </StackPanel>
+                    </Button>
+                    <Button ToolTip="Record Showtape" Click="Record_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Icons/page_white_code_red.png" />
+                        </StackPanel>
+                    </Button>
                 </ToolBar>
             </ToolBarTray>
-            <GroupBox Header="Settings" Width="150" HorizontalAlignment="Left" Height="480" ClipToBounds="True"  Grid.RowSpan="2" VerticalAlignment="Top" >
-                <StackPanel >
+            <GroupBox Header="Settings" Width="200" HorizontalAlignment="Left" ClipToBounds="True"  Grid.RowSpan="2" Background="White">
+                <StackPanel CanVerticallyScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <CheckBox x:Name="VideoCheckbox" Content="Video Enabled" Margin="5,5,0,0"/>
                 </StackPanel>
             </GroupBox>
-            <MediaElement x:Name="VideoPlayer" Width="640" HorizontalAlignment="Right" UnloadedBehavior="Manual" ClipToBounds="True" Margin="0,0,0,180"/>
+            <GroupBox Header="Log"  Grid.RowSpan="2" DockPanel.Dock="Bottom" ClipToBounds="True" Height="120" VerticalAlignment="Bottom" Background="White" >
+                <TextBox x:Name="logTextBox" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,0" Grid.Row="1" BorderThickness="0,0,0,0"/>
+            </GroupBox>
+            <GroupBox Header="Status"  Grid.RowSpan="2" DockPanel.Dock="Bottom" ClipToBounds="True" Height="50" Padding="4,4,4,4" Background="White">
+                <DockPanel>
+                    <ProgressBar x:Name="ShowtapeProgressBar" Value="-1"/>
+                </DockPanel>
+            </GroupBox>
+            <GroupBox Header="Video" ClipToBounds="True" DockPanel.Dock="Top" Background="White" >
+                <MediaElement x:Name="VideoPlayer" UnloadedBehavior="Manual" ClipToBounds="True"/>
+            </GroupBox>
         </DockPanel>
-        <TextBox x:Name="logTextBox" TextWrapping="Wrap" VerticalAlignment="Bottom" Height="180" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Margin="0,465,0,0" Grid.Row="1"/>
     </Grid>
 </Window>

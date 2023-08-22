@@ -9,7 +9,7 @@
     <Grid>
         <Image Height="125" Width="500" VerticalAlignment="Top" HorizontalAlignment="Left" Source="/Media/banner.png"/>
         <StackPanel Margin="25,150,25,25">
-            <Label Content="Decoder Studio v0.1.0 "/>
+            <Label Content="Decoder Studio v0.1.1 "/>
             <Label Content="www.random-beans.com"/>
             <Label Content=" GNU General Public License v3.0"/>
             <Label Content="Special thanks to Galla for helping out!"/>

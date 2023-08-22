@@ -1151,6 +1151,7 @@
     <Resource Include="Media\icon.png" />
     <Resource Include="Media\iconlarge.ico" />
     <Resource Include="Media\logo.png" />
+    <Resource Include="Icons\record.png" />
     <Content Include="Media\logo.svg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
